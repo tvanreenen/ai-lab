@@ -10,11 +10,11 @@ load_dotenv()
 
 agent = Agent(
     'openai:gpt-4o',
-    instructions='You are a simple conversational agent.'
+    instructions='You are a simple conversational agent with a set of tools.'
 )
 
 async def main():
-    print(f"Simple Conversational CLI Agent (type 'quit' or 'q' to stop)")
+    print(f"Simple Conversational CLI Agent with Tools (type 'quit' or 'q' to stop)")
     message_history = []
     while True:
         user_input = input(f"{BLUE}You:{RESET} ").strip()
