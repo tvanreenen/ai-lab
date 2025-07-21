@@ -32,45 +32,52 @@ def calculate_expression(expression: str) -> str:
         return str(result)
     except Exception as e:
         return f"Error evaluating expression: {e}"
+    
+# Pattern 1: Responds to supervisor with raw response
 
-def calculator_pattern_2(ctx: RunContext[None], expression: str) -> str:
-    """Calculator. Call this if the user specifically asks to use pattern 2."""
-    print(calculate_expression(expression), end='', flush=True)
-
-pattern3_agent = Agent(
-    'openai:gpt-4o',
-    instructions='You are a playful math explainer. When given a calculation, respond with a fun fact or joke about the result, then show the answer.'
-)
-
-async def calculator_pattern_3(ctx: RunContext[None], expression: str) -> str:
-    """Calculator. Call this if the user specifically asks to use pattern 3."""
-    async with pattern3_agent.run_stream(expression) as result:
-        async for chunk in result.stream_text(delta=True):
-            print(chunk, end='', flush=True)
-
-class Pattern4Response(BaseModel):
-    result: str
-    supervisor_instructions: str
-
-supervisor = Agent(
-    'openai:gpt-4o',
-    instructions='''You are a conversational agent that can use tools to fulfill user requests.''',
-    output_type=[str, calculator_pattern_2, calculator_pattern_3]
-)
-
-@supervisor.tool
 def calculator_pattern_1(ctx: RunContext[None], expression: str) -> str:
     """Calculator. Call this if the user specifically asks to use pattern 1."""
     return calculate_expression(expression)
 
-@supervisor.tool
-def calculator_pattern_4(ctx: RunContext[None], expression: str) -> str:
-    """Calculator. Call this if the user specifically asks to use pattern 4."""
-    response = Pattern4Response(
+# Pattern 2: Responds to supervisor with raw response and instruction on how to respond to user
+
+class Pattern2Response(BaseModel):
+    result: str
+    supervisor_instructions: str
+
+def calculator_pattern_2(ctx: RunContext[None], expression: str) -> str:
+    """Calculator. Call this if the user specifically asks to use pattern 2."""
+    response = Pattern2Response(
         result=calculate_expression(expression),
         supervisor_instructions="Present the result in an overly scientificly verbose way."
     )
     return response
+
+# Pattern 3: Self-responds with raw response from function
+
+def calculator_pattern_3(ctx: RunContext[None], expression: str) -> str:
+    """Calculator. Call this if the user specifically asks to use pattern 3."""
+    print(calculate_expression(expression), end='', flush=True)
+
+# Pattern 4: Self-responds with response from sub-agent
+
+pattern4_agent = Agent(
+    'openai:gpt-4o',
+    instructions='You are a playful math explainer. When given a calculation, respond with a fun fact or joke about the result, then show the answer.'
+)
+
+async def calculator_pattern_4(ctx: RunContext[None], expression: str) -> str:
+    """Calculator. Call this if the user specifically asks to use pattern 4."""
+    async with pattern4_agent.run_stream(expression) as result:
+        async for chunk in result.stream_text(delta=True):
+            print(chunk, end='', flush=True)
+
+supervisor = Agent(
+    'openai:gpt-4o',
+    instructions='''You are a conversational agent that can use tools to fulfill user requests.''',
+    tools=[calculator_pattern_1, calculator_pattern_2],
+    output_type=[str, calculator_pattern_3, calculator_pattern_4]
+)
 
 async def main():
     print(f"Enter a mathematical expression to calculate and a pattern to use (type 'quit' or 'q' to stop)")
