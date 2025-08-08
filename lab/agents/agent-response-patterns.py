@@ -1,19 +1,16 @@
-from pydantic_ai import Agent, RunContext
-from dotenv import load_dotenv
 import asyncio
-import numexpr
 import math
-from datetime import datetime
+
+from pydantic import BaseModel
+from pydantic_ai import Agent, RunContext
 from pydantic_ai.messages import (
     FunctionToolCallEvent,
-    FunctionToolResultEvent,
     PartDeltaEvent,
     PartStartEvent,
     TextPartDelta,
-    ToolCallPartDelta,
-    FinalResultEvent,
 )
-from pydantic import BaseModel
+from dotenv import load_dotenv
+import numexpr
 
 BLUE = "\033[94m"
 GREEN = "\033[92m"
