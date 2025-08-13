@@ -59,18 +59,11 @@ async def consolidate_memory(messages: list[ModelMessage]) -> list[ModelMessage]
     index_of_last_message_to_keep = number_of_messages_in_history - number_of_messages_to_keep
     
     if number_of_messages_in_history <= consolidation_threshold:
-        print(f'skipping memory consolidation, not enough messages to consolidate ({number_of_messages_in_history} <= {consolidation_threshold})')
         return messages
     
-    print('number_of_messages_in_history ', number_of_messages_in_history)
-    print('number_of_messages_to_summarize ', number_of_messages_to_summarize)
-    print('number_of_messages_to_keep ', number_of_messages_to_keep)
-    print('index_of_last_message_to_keep ', index_of_last_message_to_keep)
     if (any(isinstance(part, ToolReturnPart) for part in messages[index_of_last_message_to_keep].parts)):
-        print('skipping memory consolidation, to avoid splitting tool call/return messages')
         return messages
     
-    print(f'consolidating {number_of_messages_to_summarize} of {number_of_messages_in_history} messages')
     result = await memory_consolidator.run(message_history=messages[:number_of_messages_to_summarize])
     return result.new_messages() + messages[-number_of_messages_to_keep:]
 
