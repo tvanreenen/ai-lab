@@ -1,0 +1,9 @@
+[project]
+name = "pydantic-ai-agent-with-tools"
+version = "0.1.0"
+description = "Agent with tools example"
+requires-python = ">=3.13"
+dependencies = [
+    "numexpr>=2.14.1",
+    "pydantic-ai>=1.7.0",
+]

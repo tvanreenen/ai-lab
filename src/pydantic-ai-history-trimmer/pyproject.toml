@@ -1,0 +1,11 @@
+[project]
+name = "pydantic-ai-history-trimmer"
+version = "0.1.0"
+description = "History trimmer agent example"
+requires-python = ">=3.13"
+dependencies = [
+    "logfire>=4.14.2",
+    "numexpr>=2.14.1",
+    "pydantic-ai>=1.7.0",
+    "uuid>=1.30",
+]

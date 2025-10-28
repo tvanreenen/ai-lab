@@ -1,0 +1,8 @@
+[project]
+name = "pydantic-ai-simple-agent"
+version = "0.1.0"
+description = "Simple agent example"
+requires-python = ">=3.13"
+dependencies = [
+    "pydantic-ai>=1.7.0",
+]

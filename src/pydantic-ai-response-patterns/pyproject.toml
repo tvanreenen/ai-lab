@@ -1,0 +1,9 @@
+[project]
+name = "pydantic-ai-response-patterns"
+version = "0.1.0"
+description = "Response patterns agent example"
+requires-python = ">=3.13"
+dependencies = [
+    "numexpr>=2.14.1",
+    "pydantic-ai>=1.7.0",
+]

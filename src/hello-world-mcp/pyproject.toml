@@ -1,0 +1,9 @@
+[project]
+name = "hello-world-mcp"
+version = "0.1.0"
+description = "Hello world MCP example"
+requires-python = ">=3.13"
+dependencies = [
+    "fastmcp>=2.13.0.2",
+    "pyngrok>=7.4.1",
+]
