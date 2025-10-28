@@ -13,7 +13,7 @@ load_dotenv()
 logfire.configure(
     token=os.getenv("LOGFIRE_WRITE_TOKEN"),
     send_to_logfire='if-token-present',
-    service_name=os.path.basename(__file__)
+    service_name=os.path.basename(os.path.dirname(__file__))
 )
 
 class CustomerOrder(BaseModel):

@@ -92,5 +92,5 @@ async def main():
 if __name__ == "__main__":
     logfire.configure(token=os.getenv("LOGFIRE_WRITE_TOKEN"), send_to_logfire='if-token-present')
     logfire.instrument_pydantic_ai()
-    with logfire.span(os.path.basename(__file__), attributes={"session_id": str(uuid.uuid4())}):
+    with logfire.span(os.path.basename(os.path.dirname(__file__)), attributes={"session_id": str(uuid.uuid4())}):
         asyncio.run(main()) 
