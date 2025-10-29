@@ -1,0 +1,9 @@
+[project]
+name = "pydantic-ai-custom-instructions"
+version = "0.1.0"
+description = "Example using custom instructions decorators with pydantic-ai"
+requires-python = ">=3.13"
+dependencies = [
+    "pydantic-ai>=1.7.0",
+]
+

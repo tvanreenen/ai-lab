@@ -8,6 +8,7 @@ members = [
     "embedding-foundations",
     "hello-world-mcp",
     "pydantic-ai-agent-with-tools",
+    "pydantic-ai-custom-instructions",
     "pydantic-ai-evaluations",
     "pydantic-ai-extended-planner",
     "pydantic-ai-history-summarizer",
@@ -1877,6 +1878,17 @@ requires-dist = [
     { name = "numexpr", specifier = ">=2.14.1" },
     { name = "pydantic-ai", specifier = ">=1.7.0" },
 ]
+
+[[package]]
+name = "pydantic-ai-custom-instructions"
+version = "0.1.0"
+source = { virtual = "src/pydantic-ai-custom-instructions" }
+dependencies = [
+    { name = "pydantic-ai" },
+]
+
+[package.metadata]
+requires-dist = [{ name = "pydantic-ai", specifier = ">=1.7.0" }]
 
 [[package]]
 name = "pydantic-ai-evaluations"
