@@ -1932,15 +1932,15 @@ version = "0.1.0"
 source = { virtual = "src/pydantic-ai-history-summarizer" }
 dependencies = [
     { name = "logfire" },
+    { name = "pydantic" },
     { name = "pydantic-ai" },
-    { name = "uuid" },
 ]
 
 [package.metadata]
 requires-dist = [
     { name = "logfire", specifier = ">=4.14.2" },
+    { name = "pydantic", specifier = ">=2.12.3" },
     { name = "pydantic-ai", specifier = ">=1.7.0" },
-    { name = "uuid", specifier = ">=1.30" },
 ]
 
 [[package]]

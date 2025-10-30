@@ -5,6 +5,6 @@ description = "History summarizer agent example"
 requires-python = ">=3.13"
 dependencies = [
     "logfire>=4.14.2",
+    "pydantic>=2.12.3",
     "pydantic-ai>=1.7.0",
-    "uuid>=1.30",
 ]
