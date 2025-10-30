@@ -1,13 +1,13 @@
-import os
 import asyncio
+import os
 from textwrap import dedent
 
+import logfire
 from dotenv import load_dotenv
+from pydantic import BaseModel, Field
 from pydantic_ai import Agent, RunContext
 from pydantic_ai.messages import ModelMessage, ToolReturnPart
-from pydantic_ai.models.openai import OpenAIResponsesModel, OpenAIResponsesModelSettings
-from pydantic import BaseModel, Field
-import logfire
+from pydantic_ai.models.openai import OpenAIResponsesModel
 
 load_dotenv()
 
@@ -23,7 +23,7 @@ class DiscussionSubject(BaseModel):
         description=(
             "Detailed, compact summary of how this subject was discussed: key definitions, steps, examples, "
             "decisions, constraints, caveats, and outcomes. Capture granular points without conversational filler."
-        )
+        ),
     )
 
 class ConversationMemory(BaseModel):
@@ -40,12 +40,12 @@ class AgentDeps(BaseModel):
 def calculate_token_usage(messages: list[ModelMessage]) -> tuple[int, float]:
     """Calculate total token usage from ModelResponse messages and percentage of limit."""
     total_tokens = 0
-    
+
     for message in messages:
-        if hasattr(message, 'usage') and message.usage:
+        if hasattr(message, "usage") and message.usage:
             usage = message.usage
             total_tokens += usage.input_tokens + usage.output_tokens
-    
+
     percentage = (total_tokens / TOKEN_LIMIT) * 100
     return total_tokens, percentage
 
@@ -54,22 +54,22 @@ def format_memory_as_markdown(ctx: RunContext[AgentDeps]) -> str:
     memory = ctx.deps.memory
     if memory is None or (not memory.user_context and not memory.discussed_subjects):
         return ""
-    
+
     sections = []
-    
+
     if memory.user_context:
         sections.append("### User Context:")
         sections.extend(f"- {context}" for context in memory.user_context)
-    
+
     if memory.discussed_subjects:
         sections.append("\n### Discussed Subjects:")
         sections.extend(f"- **{subject.subject}**: {subject.summary}" for subject in memory.discussed_subjects)
-    
+
     return "\n".join(sections)
 
 # Agent Definitions
 memory_consolidator = Agent[AgentDeps, ConversationMemory](
-    'openai:gpt-4.1',
+    "openai:gpt-4.1",
     output_type=ConversationMemory,
     deps_type=AgentDeps,
 )
@@ -78,19 +78,19 @@ memory_consolidator = Agent[AgentDeps, ConversationMemory](
 async def process_history_for_consolidation(ctx: RunContext[AgentDeps], messages: list[ModelMessage]) -> list[ModelMessage]:
     """Process message history: consolidate memory when token threshold is reached."""
     total_tokens, percentage = calculate_token_usage(messages)
-    
+
     if total_tokens < TOKEN_LIMIT:
         print(f"\n✅ No consolidation needed ({total_tokens:,} tokens = {percentage:.1f}% of {TOKEN_LIMIT:,} limit)\n")
         return messages
-    
+
     if messages and any(isinstance(part, ToolReturnPart) for part in messages[-1].parts):
-        print(f"\n⚠️  Skipping consolidation (tool return at boundary)\n")
+        print("\n⚠️  Skipping consolidation (tool return at boundary)\n")
         return messages
-    
+
     print(f"\n🔄 Consolidator triggered ({total_tokens:,} tokens = {percentage:.1f}% of {TOKEN_LIMIT:,} limit)\n")
 
     result = await memory_consolidator.run(message_history=messages, deps=ctx.deps)
-    
+
     # Update ctx.deps.memory with the LLM-rebuilt conversation memory
     # Since ctx.deps is the same object reference as deps passed to run_stream, this automatically updates deps in the main loop
     ctx.deps.memory = result.output
@@ -99,9 +99,9 @@ async def process_history_for_consolidation(ctx: RunContext[AgentDeps], messages
     return [messages[-1]]
 
 agent = Agent(
-    OpenAIResponsesModel('gpt-4.1'),
+    OpenAIResponsesModel("gpt-4.1"),
     deps_type=AgentDeps,
-    instructions='You are a simple conversational agent.',
+    instructions="You are a simple conversational agent.",
     history_processors=[process_history_for_consolidation],
 )
 
@@ -159,26 +159,26 @@ async def main():
         "I've heard about decorators in Python but never used them. What are they and how can they be used in teaching? I'm always looking for ways to make my code cleaner.",
         "My students and I are curious about Python's built-in functions. Can you give a brief overview? We have 45-minute class periods, so I need to keep things concise.",
         "Occasionally, we run into errors during coding. What's the best way to handle exceptions in Python with students? I get anxious when things break and the kids are watching.",
-        "One final question: Students see both `==` and `is` in code samples online. What's the difference between them in Python? I want to make sure I give them accurate information."
+        "One final question: Students see both `==` and `is` in code samples online. What's the difference between them in Python? I want to make sure I give them accurate information.",
     ]
-    
+
     for prompt in test_prompts:
         print(f"\n{BLUE}You:{RESET} {prompt}\n")
-        
+
         async with agent.run_stream(prompt, deps=deps, message_history=message_history) as result:
             print(f"\n{BLUE}Agent:{RESET} ", end="", flush=True)
 
             async for chunk in result.stream_text(delta=True):
                 print(chunk, end="", flush=True)
-            
+
             message_history = result.all_messages()
-            
+
             if message_history:
                 total_tokens, percentage = calculate_token_usage(message_history)
                 print(f"\n📊 Tokens: {total_tokens:,} ({percentage:.1f}% of {TOKEN_LIMIT:,} limit)")
 
 if __name__ == "__main__":
-    logfire.configure(token=os.getenv("LOGFIRE_WRITE_TOKEN"), send_to_logfire='if-token-present')
+    logfire.configure(token=os.getenv("LOGFIRE_WRITE_TOKEN"), send_to_logfire="if-token-present")
     logfire.instrument_pydantic_ai()
     with logfire.span(os.path.basename(os.path.dirname(__file__))):
         asyncio.run(main())

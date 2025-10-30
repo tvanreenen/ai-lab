@@ -1,17 +1,15 @@
-from pydantic_ai import Agent, RunContext
-from dotenv import load_dotenv
 import asyncio
-import numexpr
 import math
 from datetime import datetime
+
+import numexpr
+from dotenv import load_dotenv
+from pydantic_ai import Agent, RunContext
 from pydantic_ai.messages import (
     FunctionToolCallEvent,
-    FunctionToolResultEvent,
     PartDeltaEvent,
     PartStartEvent,
     TextPartDelta,
-    ToolCallPartDelta,
-    FinalResultEvent,
 )
 
 BLUE = "\033[94m"
@@ -21,8 +19,8 @@ RESET = "\033[0m"
 load_dotenv()
 
 agent = Agent(
-    'openai:gpt-4o',
-    instructions='You are a simple conversational agent with access to a calculator and the current timestamp.'
+    "openai:gpt-4o",
+    instructions="You are a simple conversational agent with access to a calculator and the current timestamp.",
 )
 
 @agent.tool
@@ -44,7 +42,7 @@ def current_timestamp(ctx: RunContext[None]) -> str:
     return datetime.now().isoformat()
 
 async def main():
-    print(f"Simple Conversational CLI Agent with Tools (type 'quit' or 'q' to stop)")
+    print("Simple Conversational CLI Agent with Tools (type 'quit' or 'q' to stop)")
     message_history = []
     while True:
         user_input = input(f"{BLUE}You:{RESET} ").strip()
@@ -57,10 +55,10 @@ async def main():
                     async with node.stream(run.ctx) as request_stream:
                         async for event in request_stream:
                             if isinstance(event, PartStartEvent):
-                                print(f"{GREEN}Agent:{RESET} ", end='', flush=True)
+                                print(f"{GREEN}Agent:{RESET} ", end="", flush=True)
                             if isinstance(event, PartDeltaEvent):
                                 if isinstance(event.delta, TextPartDelta):
-                                    print(event.delta.content_delta, end='', flush=True)
+                                    print(event.delta.content_delta, end="", flush=True)
                 elif Agent.is_call_tools_node(node):
                     async with node.stream(run.ctx) as tool_stream:
                         async for event in tool_stream:
@@ -70,4 +68,4 @@ async def main():
             message_history = run.result.all_messages()
 
 if __name__ == "__main__":
-    asyncio.run(main()) 
+    asyncio.run(main())

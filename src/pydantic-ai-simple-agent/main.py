@@ -1,6 +1,7 @@
-from pydantic_ai import Agent
-from dotenv import load_dotenv
 import asyncio
+
+from dotenv import load_dotenv
+from pydantic_ai import Agent
 
 BLUE = "\033[94m"
 GREEN = "\033[92m"
@@ -9,12 +10,12 @@ RESET = "\033[0m"
 load_dotenv()
 
 agent = Agent(
-    'openai:gpt-4o',
-    instructions='You are a simple conversational agent with a set of tools.'
+    "openai:gpt-4o",
+    instructions="You are a simple conversational agent with a set of tools.",
 )
 
 async def main():
-    print(f"Simple Conversational CLI Agent with Tools (type 'quit' or 'q' to stop)")
+    print("Simple Conversational CLI Agent with Tools (type 'quit' or 'q' to stop)")
     message_history = []
     while True:
         user_input = input(f"{BLUE}You:{RESET} ").strip()

@@ -10,14 +10,11 @@ A simple MCP server that demonstrates:
 Exposed via ngrok for external testing.
 """
 
-import asyncio
-import json
-from typing import Any, Dict, List
-from fastmcp import FastMCP
-from pyngrok import ngrok
 import signal
 import sys
 
+from fastmcp import FastMCP
+from pyngrok import ngrok
 
 # Initialize FastMCP server
 mcp = FastMCP("Hello World Server")
@@ -69,28 +66,28 @@ Example responses:
 def main():
     """Main server function that starts the MCP server and ngrok tunnel."""
     print("🚀 Starting FastMCP Hello World Server...")
-    
+
     tunnel = None
     public_url = None
-    
+
     # Try to create ngrok tunnel first
     try:
         # Create HTTP tunnel
         tunnel = ngrok.connect(8000, "http")
         public_url = tunnel.public_url
-        
+
         print(f"🌐 Public ngrok URL: {public_url}")
-        print(f"✅ MCP Server will run locally at: http://localhost:8000")
+        print("✅ MCP Server will run locally at: http://localhost:8000")
         print("\n📋 Available endpoints:")
         print(f"   Resource: {public_url}/resource/greeting://hello")
         print(f"   Tool: {public_url}/tool/greet_user")
         print(f"   Prompt: {public_url}/prompt/hello_prompt")
-        
+
         print("\n🧪 Test the server:")
         print(f"   curl {public_url}/resource/greeting://hello")
         print(f"   curl -X POST {public_url}/tool/greet_user -H 'Content-Type: application/json' -d '{{\"name\": \"Alice\"}}'")
         print(f"   curl {public_url}/prompt/hello_prompt")
-        
+
     except Exception as e:
         print(f"⚠️  Could not create ngrok tunnel: {e}")
         print("💡 To use ngrok:")
@@ -98,19 +95,19 @@ def main():
         print("   2. Get your authtoken: https://dashboard.ngrok.com/get-started/your-authtoken")
         print("   3. Run: ngrok config add-authtoken YOUR_TOKEN")
         print("\n🔄 Running server locally only...")
-        print(f"✅ MCP Server will run locally at: http://localhost:8000")
+        print("✅ MCP Server will run locally at: http://localhost:8000")
         print("\n📋 Available endpoints:")
-        print(f"   Resource: http://localhost:8000/resource/greeting://hello")
-        print(f"   Tool: http://localhost:8000/tool/greet_user")
-        print(f"   Prompt: http://localhost:8000/prompt/hello_prompt")
-        
+        print("   Resource: http://localhost:8000/resource/greeting://hello")
+        print("   Tool: http://localhost:8000/tool/greet_user")
+        print("   Prompt: http://localhost:8000/prompt/hello_prompt")
+
         print("\n🧪 Test the server:")
-        print(f"   curl http://localhost:8000/resource/greeting://hello")
-        print(f"   curl -X POST http://localhost:8000/tool/greet_user -H 'Content-Type: application/json' -d '{{\"name\": \"Alice\"}}'")
-        print(f"   curl http://localhost:8000/prompt/hello_prompt")
-    
+        print("   curl http://localhost:8000/resource/greeting://hello")
+        print("   curl -X POST http://localhost:8000/tool/greet_user -H 'Content-Type: application/json' -d '{\"name\": \"Alice\"}'")
+        print("   curl http://localhost:8000/prompt/hello_prompt")
+
     print("\n⏹️  Press Ctrl+C to stop the server")
-    
+
     try:
         # Start the FastMCP server (this blocks)
         mcp.run(transport="http", host="127.0.0.1", port=8000)
@@ -135,7 +132,7 @@ def signal_handler(sig, frame):
 if __name__ == "__main__":
     # Set up signal handler for graceful shutdown
     signal.signal(signal.SIGINT, signal_handler)
-    
+
     # Run the server
     try:
         main()

@@ -1,18 +1,18 @@
+import asyncio
 import os
-from typing import Annotated, Optional, Literal
+from typing import Annotated, Literal
 
 import logfire
+import numexpr
+from dotenv import load_dotenv
 from pydantic import BaseModel, Field
 from pydantic_ai import Agent, RunContext
 from pydantic_ai.common_tools.duckduckgo import duckduckgo_search_tool
-from dotenv import load_dotenv
-import asyncio
-import numexpr
 
 logfire.configure(
     token=os.getenv("LOGFIRE_WRITE_TOKEN"),
-    send_to_logfire='if-token-present',
-    service_name=os.path.basename(os.path.dirname(__file__))
+    send_to_logfire="if-token-present",
+    service_name=os.path.basename(os.path.dirname(__file__)),
 )
 logfire.instrument_pydantic_ai()
 
@@ -48,12 +48,12 @@ async def calculator(
 class NextStep(BaseModel):
     done: Annotated[bool, Field(description="Whether or now you full completed the user's request. Try again if not.")]
     reason: str
-    action: Optional[Literal["duckduckgo_search_tool", "calculator", "none"]] = "none"
-    action_args: Optional[dict] = None
-    partial_answer: Optional[str] = None
+    action: Literal["duckduckgo_search_tool", "calculator", "none"] | None = "none"
+    action_args: dict | None = None
+    partial_answer: str | None = None
 
 agent = Agent(
-    'openai:gpt-4o',
+    "openai:gpt-4o",
     instructions=(
             "You are in an iterative loop. Consider the most recent tool result before deciding the next step. "
             "Prefer concrete actions. Only set done=True when the request is fully satisfied."

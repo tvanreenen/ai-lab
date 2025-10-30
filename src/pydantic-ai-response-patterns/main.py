@@ -1,6 +1,8 @@
 import asyncio
 import math
 
+import numexpr
+from dotenv import load_dotenv
 from pydantic import BaseModel
 from pydantic_ai import Agent, RunContext
 from pydantic_ai.messages import (
@@ -9,8 +11,6 @@ from pydantic_ai.messages import (
     PartStartEvent,
     TextPartDelta,
 )
-from dotenv import load_dotenv
-import numexpr
 
 BLUE = "\033[94m"
 GREEN = "\033[92m"
@@ -29,7 +29,7 @@ def calculate_expression(expression: str) -> str:
         return str(result)
     except Exception as e:
         return f"Error evaluating expression: {e}"
-    
+
 # Pattern 1: Responds to supervisor with raw response
 
 def calculator_pattern_1(ctx: RunContext[None], expression: str) -> str:
@@ -46,7 +46,7 @@ def calculator_pattern_2(ctx: RunContext[None], expression: str) -> str:
     """Calculator. Call this if the user specifically asks to use pattern 2."""
     response = Pattern2Response(
         result=calculate_expression(expression),
-        supervisor_instructions="Present the result in an overly scientificly verbose way."
+        supervisor_instructions="Present the result in an overly scientificly verbose way.",
     )
     return response
 
@@ -54,49 +54,49 @@ def calculator_pattern_2(ctx: RunContext[None], expression: str) -> str:
 
 def calculator_pattern_3(ctx: RunContext[None], expression: str) -> str:
     """Calculator. Call this if the user specifically asks to use pattern 3."""
-    print(calculate_expression(expression), end='', flush=True)
+    print(calculate_expression(expression), end="", flush=True)
 
 # Pattern 4: Self-responds with response from sub-agent
 
 pattern4_agent = Agent(
-    'openai:gpt-4o',
-    instructions='You are a playful math explainer. When given a calculation, respond with a fun fact or joke about the result, then show the answer.'
+    "openai:gpt-4o",
+    instructions="You are a playful math explainer. When given a calculation, respond with a fun fact or joke about the result, then show the answer.",
 )
 
 async def calculator_pattern_4(ctx: RunContext[None], expression: str) -> str:
     """Calculator. Call this if the user specifically asks to use pattern 4."""
     async with pattern4_agent.run_stream(expression) as result:
         async for chunk in result.stream_text(delta=True):
-            print(chunk, end='', flush=True)
+            print(chunk, end="", flush=True)
 
 supervisor = Agent(
-    'openai:gpt-4o',
-    instructions='''You are a conversational agent that can use tools to fulfill user requests.''',
+    "openai:gpt-4o",
+    instructions="""You are a conversational agent that can use tools to fulfill user requests.""",
     tools=[calculator_pattern_1, calculator_pattern_2],
-    output_type=[str, calculator_pattern_3, calculator_pattern_4]
+    output_type=[str, calculator_pattern_3, calculator_pattern_4],
 )
 
 async def main():
-    print(f"Enter a mathematical expression to calculate and a pattern to use (type 'quit' or 'q' to stop)")
+    print("Enter a mathematical expression to calculate and a pattern to use (type 'quit' or 'q' to stop)")
     print("Type 'quit' or 'q' to stop\n")
-    
+
     message_history = []
     while True:
         user_input = input(f"{BLUE}You:{RESET} ").strip()
         if user_input.lower() in {"quit", "q"}:
             print("Goodbye!")
             break
-            
+
         async with supervisor.iter(user_input, message_history=message_history) as run:
             async for node in run:
                 if Agent.is_model_request_node(node):
                     async with node.stream(run.ctx) as request_stream:
                         async for event in request_stream:
                             if isinstance(event, PartStartEvent):
-                                print(f"{GREEN}Agent:{RESET} ", end='', flush=True)
+                                print(f"{GREEN}Agent:{RESET} ", end="", flush=True)
                             if isinstance(event, PartDeltaEvent):
                                 if isinstance(event.delta, TextPartDelta):
-                                    print(event.delta.content_delta, end='', flush=True)
+                                    print(event.delta.content_delta, end="", flush=True)
                 elif Agent.is_call_tools_node(node):
                     async with node.stream(run.ctx) as tool_stream:
                         async for event in tool_stream:
@@ -106,4 +106,4 @@ async def main():
             message_history = run.result.all_messages()
 
 if __name__ == "__main__":
-    asyncio.run(main()) 
+    asyncio.run(main())

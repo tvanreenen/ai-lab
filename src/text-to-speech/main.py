@@ -1,8 +1,9 @@
 # https://www.openai.fm/
 
-import os
-from dotenv import load_dotenv
 import asyncio
+import os
+
+from dotenv import load_dotenv
 from openai import AsyncOpenAI
 from openai.helpers import LocalAudioPlayer
 
