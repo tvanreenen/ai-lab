@@ -1,0 +1,13 @@
+{
+  "rows_train": 2118,
+  "rows_val": 417,
+  "rows_test": 469,
+  "test_positive_rate": 0.2942430703624733,
+  "roc_auc_test": 0.639147948684268,
+  "pr_auc_test": 0.45936437490926607,
+  "precision_at_top_10pct": 0.5652173913043478,
+  "random_precision_at_top_10pct_mean": 0.28891304347826086,
+  "lift_vs_random_mean_at_top_10pct": 1.9563581640331076,
+  "lift_vs_prevalence_at_top_10pct": 1.920919974795211,
+  "best_iteration": 94
+}
