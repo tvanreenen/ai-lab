@@ -1,0 +1,10 @@
+{
+  "rows_train": 3518,
+  "rows_val": 464,
+  "rows_test": 557,
+  "test_churn_rate": 0.19210053859964094,
+  "roc_auc_test": 0.5612876427829698,
+  "pr_auc_test": 0.2725304749235214,
+  "precision_at_top_10pct": 0.2909090909090909,
+  "best_iteration": 207
+}
