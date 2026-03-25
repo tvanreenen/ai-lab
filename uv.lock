@@ -20,7 +20,6 @@ members = [
     "gb-churn",
     "hello-world-mcp",
     "pydantic-ai-agent-tools",
-    "pydantic-ai-evaluations",
     "pydantic-ai-history-summarizer",
     "pydantic-ai-history-trimmer",
     "pydantic-ai-logfire",
@@ -1985,23 +1984,6 @@ requires-dist = [
 ]
 
 [[package]]
-name = "pydantic-ai-evaluations"
-version = "0.1.0"
-source = { virtual = "src/pydantic-ai-evaluations" }
-dependencies = [
-    { name = "logfire" },
-    { name = "pydantic-ai" },
-    { name = "pydantic-evals" },
-]
-
-[package.metadata]
-requires-dist = [
-    { name = "logfire", specifier = ">=4.14.2" },
-    { name = "pydantic-ai", specifier = ">=1.7.0" },
-    { name = "pydantic-evals", specifier = ">=1.7.0" },
-]
-
-[[package]]
 name = "pydantic-ai-history-summarizer"
 version = "0.1.0"
 source = { virtual = "src/pydantic-ai-history-summarizer" }
@@ -2059,12 +2041,14 @@ source = { virtual = "src/pydantic-ai-response-patterns" }
 dependencies = [
     { name = "numexpr" },
     { name = "pydantic-ai" },
+    { name = "python-dotenv" },
 ]
 
 [package.metadata]
 requires-dist = [
     { name = "numexpr", specifier = ">=2.14.1" },
     { name = "pydantic-ai", specifier = ">=1.7.0" },
+    { name = "python-dotenv", specifier = ">=1.1.0" },
 ]
 
 [[package]]
