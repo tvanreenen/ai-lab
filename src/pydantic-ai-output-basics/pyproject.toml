@@ -1,7 +1,7 @@
 [project]
-name = "pydantic-ai-response-patterns"
+name = "pydantic-ai-output-basics"
 version = "0.1.0"
-description = "Response patterns agent example"
+description = "Pydantic AI output basics (response patterns)"
 requires-python = ">=3.13"
 dependencies = [
     "numexpr>=2.14.1",

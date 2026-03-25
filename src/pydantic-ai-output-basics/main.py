@@ -10,8 +10,8 @@ Shared math helper: ``_common.py``.
 
 Example::
 
-    uv run --package pydantic-ai-response-patterns python \\
-        src/pydantic-ai-response-patterns/pattern_1.py
+    uv run --package pydantic-ai-output-basics python \\
+        src/pydantic-ai-output-basics/pattern_1.py
 """
 
 import sys

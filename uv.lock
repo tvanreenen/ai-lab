@@ -23,7 +23,8 @@ members = [
     "pydantic-ai-history-summarizer",
     "pydantic-ai-history-trimmer",
     "pydantic-ai-logfire",
-    "pydantic-ai-response-patterns",
+    "pydantic-ai-output-basics",
+    "pydantic-ai-remote-dataset",
     "pydantic-ai-simple-agent",
     "text-to-speech",
 ]
@@ -2035,9 +2036,9 @@ requires-dist = [
 ]
 
 [[package]]
-name = "pydantic-ai-response-patterns"
+name = "pydantic-ai-output-basics"
 version = "0.1.0"
-source = { virtual = "src/pydantic-ai-response-patterns" }
+source = { virtual = "src/pydantic-ai-output-basics" }
 dependencies = [
     { name = "numexpr" },
     { name = "pydantic-ai" },
@@ -2047,6 +2048,23 @@ dependencies = [
 [package.metadata]
 requires-dist = [
     { name = "numexpr", specifier = ">=2.14.1" },
+    { name = "pydantic-ai", specifier = ">=1.7.0" },
+    { name = "python-dotenv", specifier = ">=1.1.0" },
+]
+
+[[package]]
+name = "pydantic-ai-remote-dataset"
+version = "0.1.0"
+source = { virtual = "src/pydantic-ai-remote-dataset" }
+dependencies = [
+    { name = "httpx" },
+    { name = "pydantic-ai" },
+    { name = "python-dotenv" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "httpx", specifier = ">=0.27" },
     { name = "pydantic-ai", specifier = ">=1.7.0" },
     { name = "python-dotenv", specifier = ">=1.1.0" },
 ]
