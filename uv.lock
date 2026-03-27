@@ -646,6 +646,8 @@ dependencies = [
     { name = "numpy" },
     { name = "pandas" },
     { name = "pyarrow" },
+    { name = "pydantic-ai-slim", extra = ["openai"] },
+    { name = "python-dotenv" },
     { name = "scikit-learn" },
     { name = "xgboost" },
 ]
@@ -656,6 +658,8 @@ requires-dist = [
     { name = "numpy", specifier = ">=2.0" },
     { name = "pandas", specifier = ">=2.2" },
     { name = "pyarrow", specifier = ">=20.0.0" },
+    { name = "pydantic-ai-slim", extras = ["openai"], specifier = ">=0.2.0" },
+    { name = "python-dotenv", specifier = ">=1.0" },
     { name = "scikit-learn", specifier = ">=1.5" },
     { name = "xgboost", specifier = ">=2.0" },
 ]

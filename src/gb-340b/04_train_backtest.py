@@ -9,7 +9,12 @@ import pandas as pd
 from _common import get_paths, log_stage
 from sklearn.compose import ColumnTransformer
 from sklearn.impute import SimpleImputer
-from sklearn.metrics import average_precision_score, roc_auc_score
+from sklearn.metrics import (
+    average_precision_score,
+    brier_score_loss,
+    log_loss,
+    roc_auc_score,
+)
 from sklearn.preprocessing import OneHotEncoder
 from xgboost import XGBClassifier
 
@@ -86,10 +91,29 @@ def main() -> None:
     )
     model.fit(X_train_t, y_train, eval_set=[(X_val_t, y_val)], verbose=False)
     proba_test = model.predict_proba(X_test_t)[:, 1]
-    topk = max(1, int(0.1 * len(y_test)))
-    top_idx = np.argsort(proba_test)[-topk:]
     y_arr = y_test.to_numpy()
     baseline_rate = float(y_test.mean()) if len(y_test) else 0.0
+
+    def _topk_metrics(frac: float) -> dict[str, float]:
+        k = max(1, int(frac * len(y_arr)))
+        idx = np.argsort(proba_test)[-k:]
+        precision = float(np.mean(y_arr[idx])) if k else float("nan")
+        positives = float(np.sum(y_arr))
+        recall = float(np.sum(y_arr[idx]) / positives) if positives > 0 else float("nan")
+        lift_vs_prevalence = precision / baseline_rate if baseline_rate > 0 else float("nan")
+        return {
+            "k": float(k),
+            "precision": precision,
+            "recall": recall,
+            "lift_vs_prevalence": lift_vs_prevalence,
+        }
+
+    budget_fracs = [0.01, 0.05, 0.10, 0.20, 0.30]
+    budget_metrics = {str(int(f * 100)): _topk_metrics(f) for f in budget_fracs}
+
+    # Keep random-vs-model comparison at 10% (existing behavior).
+    topk = max(1, int(0.1 * len(y_test)))
+    top_idx = np.argsort(proba_test)[-topk:]
     rng = np.random.default_rng(args.seed)
     random_trials = 400
     random_precisions = []
@@ -104,6 +128,28 @@ def main() -> None:
     )
     lift_vs_prevalence = precision_topk / baseline_rate if baseline_rate > 0 else float("nan")
 
+    # Proper scoring rules / calibration-oriented metrics.
+    brier = float(brier_score_loss(y_arr, proba_test)) if len(y_arr) else float("nan")
+    ll = float(log_loss(y_arr, proba_test, labels=[0, 1])) if len(y_arr) else float("nan")
+
+    # Simple reliability table by predicted-probability decile.
+    cal = pd.DataFrame({"p": proba_test, "y": y_arr})
+    try:
+        cal["decile"] = pd.qcut(cal["p"], q=10, labels=False, duplicates="drop")
+        calib_rows = []
+        for d, g in cal.groupby("decile", sort=True):
+            calib_rows.append(
+                {
+                    "decile": int(d),
+                    "n": int(len(g)),
+                    "p_mean": float(g["p"].mean()),
+                    "y_rate": float(g["y"].mean()),
+                },
+            )
+    except ValueError:
+        # If qcut fails (e.g., too few unique probabilities), skip calibration table.
+        calib_rows = []
+
     metrics = {
         "rows_train": int(len(train_df)),
         "rows_val": int(len(val_df)),
@@ -111,10 +157,15 @@ def main() -> None:
         "test_positive_rate": baseline_rate,
         "roc_auc_test": float(roc_auc_score(y_test, proba_test)),
         "pr_auc_test": float(average_precision_score(y_test, proba_test)),
+        "brier_test": brier,
+        "log_loss_test": ll,
         "precision_at_top_10pct": precision_topk,
+        "recall_at_top_10pct": budget_metrics["10"]["recall"],
         "random_precision_at_top_10pct_mean": random_precision_mean,
         "lift_vs_random_mean_at_top_10pct": lift_vs_random_mean,
         "lift_vs_prevalence_at_top_10pct": lift_vs_prevalence,
+        "budget_metrics_pct": budget_metrics,
+        "calibration_by_decile": calib_rows,
         "best_iteration": int(model.best_iteration),
     }
 

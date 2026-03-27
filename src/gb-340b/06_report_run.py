@@ -49,11 +49,29 @@ def main() -> None:
         f"- test_positive_rate: `{metrics['test_positive_rate']:.4f}`",
         f"- roc_auc_test: `{metrics['roc_auc_test']:.4f}`",
         f"- pr_auc_test: `{metrics['pr_auc_test']:.4f}`",
+        f"- brier_test: `{metrics.get('brier_test', float('nan')):.4f}`",
+        f"- log_loss_test: `{metrics.get('log_loss_test', float('nan')):.4f}`",
         f"- precision_at_top_10pct: `{metrics['precision_at_top_10pct']:.4f}`",
+        f"- recall_at_top_10pct: `{metrics.get('recall_at_top_10pct', float('nan')):.4f}`",
         f"- random_precision_at_top_10pct_mean: `{metrics['random_precision_at_top_10pct_mean']:.4f}`",
         f"- lift_vs_random_mean_at_top_10pct: `{metrics['lift_vs_random_mean_at_top_10pct']:.4f}`",
         f"- lift_vs_prevalence_at_top_10pct: `{metrics['lift_vs_prevalence_at_top_10pct']:.4f}`",
         f"- best_iteration: `{metrics['best_iteration']}`",
+        "",
+        "## Budget metrics (test slice)",
+        "",
+    ]
+
+    bm = metrics.get("budget_metrics_pct") or {}
+    for pct in ("1", "5", "10", "20", "30"):
+        row = bm.get(pct)
+        if not row:
+            continue
+        lines.append(
+            f"- top_{pct}pct: precision `{row['precision']:.4f}`, recall `{row['recall']:.4f}`, lift_vs_prevalence `{row['lift_vs_prevalence']:.2f}`",
+        )
+
+    lines += [
         "",
         "## Latest scoring distribution",
         "",
