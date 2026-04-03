@@ -1,0 +1,22 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "memory-framework"
+version = "0.1.0"
+description = "Reusable Pydantic AI memory framework with file-backed topic memories."
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+  "pydantic-ai>=0.4.0",
+]
+
+[project.scripts]
+memory-framework = "memory_framework.cli:main"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
