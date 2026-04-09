@@ -9,7 +9,7 @@ description = "Reusable Pydantic AI memory framework with file-backed topic memo
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
-  "pydantic-ai>=0.4.0",
+  "pydantic-ai>=1.78.0",
 ]
 
 [project.scripts]

@@ -6,6 +6,6 @@ requires-python = ">=3.13"
 dependencies = [
     "logfire>=4.14.2",
     "numexpr>=2.14.1",
-    "pydantic-ai>=1.7.0",
+    "pydantic-ai>=1.78.0",
     "uuid>=1.30",
 ]

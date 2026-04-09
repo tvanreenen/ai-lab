@@ -5,6 +5,6 @@ description = "Pydantic AI output basics (response patterns)"
 requires-python = ">=3.13"
 dependencies = [
     "numexpr>=2.14.1",
-    "pydantic-ai>=1.7.0",
+    "pydantic-ai>=1.78.0",
     "python-dotenv>=1.1.0",
 ]
