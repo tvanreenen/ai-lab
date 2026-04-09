@@ -1,0 +1,10 @@
+[project]
+name = "pydantic-ai-human-approval"
+version = "0.1.0"
+description = "Human approval demo for pydantic-ai deferred tools"
+requires-python = ">=3.13"
+dependencies = [
+    "pydantic>=2.0",
+    "pydantic-ai>=1.78.0",
+    "python-dotenv>=1.1.0",
+]
