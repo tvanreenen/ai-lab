@@ -26,6 +26,10 @@ uv run --package <package-name> python src/<folder>/main.py
 
 - [src/pydantic-ai-query-dataset](/Users/tim.vanreenen/Code/ai-lab/src/pydantic-ai-query-dataset): agent that answers questions by running DuckDB SQL over a dataset.
 
+### Research Workflows
+
+- [src/pydantic-ai-deep-researcher](/Users/tim.vanreenen/Code/ai-lab/src/pydantic-ai-deep-researcher): graph-driven iterative web researcher that plans, executes, and adapts across multiple cycles.
+
 ### History And Memory
 
 - [src/pydantic-ai-history-summarizer](/Users/tim.vanreenen/Code/ai-lab/src/pydantic-ai-history-summarizer): summarize conversation history for reuse.
